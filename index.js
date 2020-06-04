@@ -29,11 +29,11 @@ module.exports = function (opts) {
       debug: false
     }
   }
-  return through.obj(function(file, enc, cb) {
-    console.log('fileeeeee', file.path);
+  return function(filePath, enc, cb) {
+    console.log('fileeeeee', filePath);
     async.series([
         function(callback){
-          exec('fontforge -script "'+__dirname+'/otf2ttf.sh" "'+file.path+'" "'+os.tmpdir()+'"',
+          exec('fontforge -script "'+__dirname+'/otf2ttf.sh" "'+filePath+'" "'+os.tmpdir()+'"',
             function (error, stdout, stderr) {
               if (opts.debug === true) {
                 console.log('stderr: ' + stderr);
@@ -58,8 +58,8 @@ module.exports = function (opts) {
           contents: fs.readFileSync(os.tmpdir()+"/"+fontInfo.fontFile)
         });
         fontFile.data = fontInfo;
-        this.push(fontFile);
-        return cb();
+        // this.push(fontFile);
+        return cb(fontFile);
       }.bind(this));
-  });
+  };
 };
