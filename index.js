@@ -39,8 +39,12 @@ module.exports = function (opts) {
                 console.log('stderr: ' + stderr);
               }
               if (error === null) {
-                fontInfo = JSON.parse(stdout);
-                callback(null, fontInfo);
+                try {
+                  fontInfo = JSON.parse(stdout);
+                  callback(null, fontInfo);
+                } catch (err) {
+                  callback(err);
+                }
               }
               else {
                 console.error('exec error: '.bold, error);
@@ -48,6 +52,9 @@ module.exports = function (opts) {
             });
         }],
       function(err, results){
+        if (err) {
+          return cb(err);
+        }
         if (opts.debug === true) {
           console.log('Font info: \n'.green.bold, results[0]);
         }
@@ -59,7 +66,7 @@ module.exports = function (opts) {
         });
         fontFile.data = fontInfo;
         // this.push(fontFile);
-        return cb(fontFile);
+        return cb(null, fontFile);
       }.bind(this));
   };
 };
