@@ -30,6 +30,7 @@ module.exports = function (opts) {
     }
   }
   return through.obj(function(file, enc, cb) {
+    console.log('fileeeeee', file.path);
     async.series([
         function(callback){
           exec('fontforge -script "'+__dirname+'/otf2ttf.sh" "'+file.path+'" "'+os.tmpdir()+'"',
